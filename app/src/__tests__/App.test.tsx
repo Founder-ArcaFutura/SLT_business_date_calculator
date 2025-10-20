@@ -53,7 +53,8 @@ describe('App integration', () => {
     await waitFor(() => {
       expect(getByText('5')).toBeTruthy();
     });
-    expect(getAllByText('$6,750.00').length).toBeGreaterThan(0);
+    const calculatedValues = getAllByText('$6,750.00');
+    expect(calculatedValues.length).toBeGreaterThan(0);
   });
 
 });

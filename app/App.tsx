@@ -13,6 +13,7 @@ import {
 import DatePickerField from './src/components/DatePickerField';
 import {
   BUSINESS_HOURS_PER_DAY,
+  BusinessDayOptions,
   ContractRateChange,
   calculateContract,
   enumerateBusinessDays
@@ -31,10 +32,11 @@ const DEFAULT_BUSINESS_DAY_WINDOW = 60;
 
 const getEndDateForBusinessDays = (
   startDate: Date,
-  businessDayTarget: number = DEFAULT_BUSINESS_DAY_WINDOW
+  businessDayTarget: number = DEFAULT_BUSINESS_DAY_WINDOW,
+  options: BusinessDayOptions = {}
 ): Date => {
   let endDate = new Date(startDate);
-  while (enumerateBusinessDays(startDate, endDate).length < businessDayTarget) {
+  while (enumerateBusinessDays(startDate, endDate, options).length < businessDayTarget) {
     endDate = addDays(endDate, 1);
   }
   return endDate;
@@ -43,7 +45,10 @@ const getEndDateForBusinessDays = (
 const App: React.FC = () => {
   const today = useMemo(() => new Date(), []);
   const [startDate, setStartDate] = useState<Date>(today);
-  const [endDate, setEndDate] = useState<Date>(() => getEndDateForBusinessDays(today));
+  const [isLearnerInQuebec, setIsLearnerInQuebec] = useState<boolean>(false);
+  const [endDate, setEndDate] = useState<Date>(() =>
+    getEndDateForBusinessDays(today, DEFAULT_BUSINESS_DAY_WINDOW, { learnerInQuebec: false })
+  );
   const [includeTax, setIncludeTax] = useState<boolean>(true);
   const [baseRateInput, setBaseRateInput] = useState<string>('120');
   const [rateChangeEnabled, setRateChangeEnabled] = useState<boolean>(true);
@@ -52,9 +57,13 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (startDate > endDate) {
-      setEndDate(getEndDateForBusinessDays(startDate));
+      setEndDate(
+        getEndDateForBusinessDays(startDate, DEFAULT_BUSINESS_DAY_WINDOW, {
+          learnerInQuebec: isLearnerInQuebec
+        })
+      );
     }
-  }, [startDate, endDate]);
+  }, [startDate, endDate, isLearnerInQuebec]);
 
   const baseRate = parseFloat(baseRateInput) || 0;
   const rateChangeRate = parseFloat(rateChangeRateInput) || 0;
@@ -74,9 +83,10 @@ const App: React.FC = () => {
         baseHourlyRate: baseRate,
         rateChange,
         includeTax,
-        taxRate: TAX_RATE
+        taxRate: TAX_RATE,
+        learnerInQuebec: isLearnerInQuebec
       }),
-    [startDate, endDate, baseRate, rateChange, includeTax]
+    [startDate, endDate, baseRate, rateChange, includeTax, isLearnerInQuebec]
   );
 
   return (
@@ -140,6 +150,18 @@ const App: React.FC = () => {
               />
             </View>
           )}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Regional Settings</Text>
+          <View style={styles.switchRow}>
+            <Text style={styles.label}>Learner is in Quebec</Text>
+            <Switch
+              value={isLearnerInQuebec}
+              onValueChange={setIsLearnerInQuebec}
+              testID="quebec-switch"
+            />
+          </View>
         </View>
 
         <View style={styles.section}>
