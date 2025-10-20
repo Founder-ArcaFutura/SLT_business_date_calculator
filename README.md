@@ -35,6 +35,50 @@ Follow these steps to see the calculator running on your device in just a few mi
 
 Installation
 Prerequisites
+Node.js LTS and npm.
+
+Android Studio (or the standalone Android SDK command-line tools) with the Android SDK installed. Open the SDK Manager at least once to download the required packages, accept the SDK licenses (sdkmanager --licenses), and then set the ANDROID_HOME (or ANDROID_SDK_ROOT) environment variable to the SDK location.
+
+Add the SDK's platform-tools directory—where adb lives—to your PATH so expo run:android can communicate with devices:
+
+- Windows PowerShell (profile or system environment variables): $env:Path += ";$env:ANDROID_HOME\platform-tools".
+- macOS (e.g., ~/.zshrc): export PATH="$ANDROID_HOME/platform-tools:$PATH".
+- Linux (e.g., ~/.bashrc): export PATH="$ANDROID_HOME/platform-tools:$PATH".
+
+Verify the setup by running adb devices. If the command lists attached devices (or reports "List of devices attached" with none connected), your PATH is correct.
+
+Expo CLI tooling (installed automatically when using the scripts below).
+
+Install dependencies
+cd app
+npm install
+All runtime and development dependencies—including Expo 50, React Native 0.73, and the community date-time picker—are defined in package.json.
+
+Run in development
+npm start
+npm start launches expo start, opening the Metro bundler with QR codes for mobile devices.
+
+Trying it on Your Phone
+Quick preview with Expo Go (Android & iOS)
+Start the development server: npm start.
+
+Install the free Expo Go app from Google Play or the iOS App Store.
+
+Ensure your phone and development machine share the same network, then scan the QR code shown in your terminal or browser tab to load the app instantly.
+
+Install a debug APK on Android
+Connect an Android device (with USB debugging enabled) or launch an emulator.
+
+Run:
+
+npm run android
+This invokes expo run:android, generates the native Android project, and produces a debug APK you can side-load (Expo places it in the standard android/app/build/outputs/apk/debug/ folder after the build completes). The script shells out to the Android SDK tools, so it will fail with an "android not recognized" error until Android Studio/SDK, ANDROID_HOME, and the platform-tools PATH entries described above are configured.
+
+The command also installs the build on any connected device; you can grab the APK from the output directory for distribution to testers.
+
+Run on iOS simulator or device
+npm run ios
+The script wraps expo run:ios, generating the native iOS project and opening it in Xcode or the default simulator. macOS with Xcode installed is required for simulator/device builds.
 - Node.js LTS (18.x or newer is recommended) and npm.
 - Optional: [nvm](https://github.com/nvm-sh/nvm) for managing Node.js versions.
 - Expo CLI tooling installs automatically when you run the npm scripts above; no global installation is required.
