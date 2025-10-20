@@ -3,6 +3,25 @@ import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import App from '../../App';
 import { BUSINESS_HOURS_PER_DAY } from '../services/businessDayCalculator';
 
+jest.mock('@react-native-picker/picker', () => {
+  const React = require('react');
+  const { View, Text } = require('react-native');
+  const Picker = ({ children, testID, onValueChange, selectedValue }: any) => (
+    <View
+      testID={testID}
+      {...({ valueChange: onValueChange, selectedValue } as any)}
+      accessibilityValue={{ text: String(selectedValue) }}
+    >
+      {children}
+    </View>
+  );
+  const Item = ({ label, value }: any) => (
+    <Text {...({ value } as any)}>{label}</Text>
+  );
+  Picker.Item = Item;
+  return { Picker };
+});
+
 jest.mock('../components/DatePickerField', () => {
   const React = require('react');
   const { Text, TextInput, View } = require('react-native');
@@ -45,16 +64,16 @@ describe('App integration', () => {
 
     fireEvent.changeText(getByTestId('start-date-picker'), '2024-11-08');
     fireEvent.changeText(getByTestId('end-date-picker'), '2024-11-15');
-    fireEvent.changeText(getByTestId('base-rate-input'), '100');
+    fireEvent(getByTestId('base-rate-picker'), 'valueChange', '20.00');
     fireEvent.changeText(getByTestId('rate-change-date'), '2024-11-12');
-    fireEvent.changeText(getByTestId('rate-change-rate-input'), '200');
+    fireEvent(getByTestId('rate-change-rate-picker'), 'valueChange', '24.00');
     fireEvent(getByTestId('tax-switch'), 'valueChange', false);
 
     await waitFor(() => {
       expect(getByText('5')).toBeTruthy();
     });
-    const calculatedValues = getAllByText('$6,750.00');
-    expect(calculatedValues.length).toBeGreaterThan(0);
+    const contractValues = getAllByText('$870.00');
+    expect(contractValues.length).toBeGreaterThan(0);
   });
 
 });
