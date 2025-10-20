@@ -10,5 +10,11 @@
     "android": "npm run android --workspace app",
     "ios": "npm run ios --workspace app",
     "test": "npm run test --workspace app"
+  },
+  "dependencies": {
+    "@expo/webpack-config": "^18.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native-web": "^0.19.9"
   }
 }
