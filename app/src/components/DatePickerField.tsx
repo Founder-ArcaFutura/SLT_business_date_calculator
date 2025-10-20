@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import DateTimePicker, { Event } from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 
 type DatePickerFieldProps = {
@@ -22,7 +22,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 }) => {
   const [showPicker, setShowPicker] = useState(false);
 
-  const handleChange = (_event: Event, selectedDate?: Date) => {
+  const handleChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
       setShowPicker(false);
     }

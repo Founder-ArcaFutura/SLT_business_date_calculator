@@ -35,7 +35,7 @@ jest.mock('../components/DatePickerField', () => {
         <TextInput
           testID={testID}
           value={value}
-          onChangeText={(text) => {
+          onChangeText={(text: string) => {
             setValue(text);
             if (text) {
               onChange(new Date(`${text}T00:00:00`));
