@@ -7,6 +7,10 @@ export type ContractRateChange = {
   hourlyRate: number;
 };
 
+export type BusinessDayOptions = {
+  learnerInQuebec?: boolean;
+};
+
 export type ContractCalculationInput = {
   startDate: Date;
   endDate: Date;
@@ -14,6 +18,7 @@ export type ContractCalculationInput = {
   rateChange?: ContractRateChange;
   includeTax: boolean;
   taxRate?: number;
+  learnerInQuebec?: boolean;
 };
 
 export type FiscalBreakdown = {
@@ -92,12 +97,21 @@ const addObservedHoliday = (date: Date, holidays: Set<string>) => {
   }
 };
 
-export const getCanadianFederalHolidays = (year: number): Set<string> => {
+export const getCanadianFederalHolidays = (
+  year: number,
+  options: BusinessDayOptions = {}
+): Set<string> => {
+  const { learnerInQuebec = false } = options;
   const holidays = new Set<string>();
   addObservedHoliday(new Date(year, 0, 1), holidays); // New Year's Day
   addObservedHoliday(addDays(calculateEasterSunday(year), -2), holidays); // Good Friday
   addObservedHoliday(getLastMondayBefore(year, 4, 24), holidays); // Victoria Day
   addObservedHoliday(new Date(year, 6, 1), holidays); // Canada Day
+  if (learnerInQuebec) {
+    addObservedHoliday(new Date(year, 5, 24), holidays); // Saint-Jean-Baptiste Day
+  } else {
+    addObservedHoliday(getNthWeekdayOfMonth(year, 7, 1, 1), holidays); // Civic Holiday (August)
+  }
   addObservedHoliday(new Date(year, 8, 30), holidays); // National Day for Truth and Reconciliation
   addObservedHoliday(getNthWeekdayOfMonth(year, 8, 1, 1), holidays); // Labour Day
   addObservedHoliday(getNthWeekdayOfMonth(year, 9, 1, 2), holidays); // Thanksgiving
@@ -117,7 +131,8 @@ const getFiscalYearLabel = (date: Date): string => {
 
 export const enumerateBusinessDays = (
   startDate: Date,
-  endDate: Date
+  endDate: Date,
+  options: BusinessDayOptions = {}
 ): Date[] => {
   const start = normaliseDate(startDate);
   const end = normaliseDate(endDate);
@@ -127,7 +142,7 @@ export const enumerateBusinessDays = (
   const holidaysByYear = new Map<number, Set<string>>();
   const collectHolidays = (year: number) => {
     if (!holidaysByYear.has(year)) {
-      holidaysByYear.set(year, getCanadianFederalHolidays(year));
+      holidaysByYear.set(year, getCanadianFederalHolidays(year, options));
     }
     return holidaysByYear.get(year)!;
   };
@@ -147,8 +162,16 @@ export const enumerateBusinessDays = (
 export const calculateContract = (
   input: ContractCalculationInput
 ): ContractCalculationResult => {
-  const { startDate, endDate, baseHourlyRate, rateChange, includeTax, taxRate = 0.13 } = input;
-  const businessDays = enumerateBusinessDays(startDate, endDate);
+  const {
+    startDate,
+    endDate,
+    baseHourlyRate,
+    rateChange,
+    includeTax,
+    taxRate = 0.13,
+    learnerInQuebec = false
+  } = input;
+  const businessDays = enumerateBusinessDays(startDate, endDate, { learnerInQuebec });
 
   if (businessDays.length === 0) {
     return {

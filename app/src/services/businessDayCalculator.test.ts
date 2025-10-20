@@ -43,4 +43,44 @@ describe('businessDayCalculator', () => {
     const totalFromBreakdown = breakdown.reduce((sum, item) => sum + item.subtotal, 0);
     expect(totalFromBreakdown).toBeCloseTo(result.subtotal);
   });
+
+  it('uses the default holiday set for non-Quebec learners', () => {
+    const days = enumerateBusinessDays(new Date('2024-08-02'), new Date('2024-08-06'));
+    const includesCivicHoliday = days.some(
+      (day) => day.getFullYear() === 2024 && day.getMonth() === 7 && day.getDate() === 5
+    );
+
+    expect(includesCivicHoliday).toBe(false);
+
+    const juneDays = enumerateBusinessDays(new Date('2024-06-21'), new Date('2024-06-25'));
+    const includesSaintJeanBaptiste = juneDays.some(
+      (day) => day.getFullYear() === 2024 && day.getMonth() === 5 && day.getDate() === 24
+    );
+
+    expect(includesSaintJeanBaptiste).toBe(true);
+  });
+
+  it('applies Quebec-specific holidays when configured', () => {
+    const quebecAugustDays = enumerateBusinessDays(
+      new Date('2024-08-02'),
+      new Date('2024-08-06'),
+      { learnerInQuebec: true }
+    );
+    const includesCivicHoliday = quebecAugustDays.some(
+      (day) => day.getFullYear() === 2024 && day.getMonth() === 7 && day.getDate() === 5
+    );
+
+    expect(includesCivicHoliday).toBe(true);
+
+    const quebecJuneDays = enumerateBusinessDays(
+      new Date('2024-06-21'),
+      new Date('2024-06-25'),
+      { learnerInQuebec: true }
+    );
+    const includesSaintJeanBaptiste = quebecJuneDays.some(
+      (day) => day.getFullYear() === 2024 && day.getMonth() === 5 && day.getDate() === 24
+    );
+
+    expect(includesSaintJeanBaptiste).toBe(false);
+  });
 });
