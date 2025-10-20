@@ -19,6 +19,16 @@ Getting Started
 Prerequisites
 Node.js LTS and npm.
 
+Android Studio (or the standalone Android SDK command-line tools) with the Android SDK installed. Open the SDK Manager at least once to download the required packages, accept the SDK licenses (sdkmanager --licenses), and then set the ANDROID_HOME (or ANDROID_SDK_ROOT) environment variable to the SDK location.
+
+Add the SDK's platform-tools directory—where adb lives—to your PATH so expo run:android can communicate with devices:
+
+- Windows PowerShell (profile or system environment variables): $env:Path += ";$env:ANDROID_HOME\platform-tools".
+- macOS (e.g., ~/.zshrc): export PATH="$ANDROID_HOME/platform-tools:$PATH".
+- Linux (e.g., ~/.bashrc): export PATH="$ANDROID_HOME/platform-tools:$PATH".
+
+Verify the setup by running adb devices. If the command lists attached devices (or reports "List of devices attached" with none connected), your PATH is correct.
+
 Expo CLI tooling (installed automatically when using the scripts below).
 
 Install dependencies
@@ -44,7 +54,7 @@ Connect an Android device (with USB debugging enabled) or launch an emulator.
 Run:
 
 npm run android
-This invokes expo run:android, generates the native Android project, and produces a debug APK you can side-load (Expo places it in the standard android/app/build/outputs/apk/debug/ folder after the build completes).
+This invokes expo run:android, generates the native Android project, and produces a debug APK you can side-load (Expo places it in the standard android/app/build/outputs/apk/debug/ folder after the build completes). The script shells out to the Android SDK tools, so it will fail with an "android not recognized" error until Android Studio/SDK, ANDROID_HOME, and the platform-tools PATH entries described above are configured.
 
 The command also installs the build on any connected device; you can grab the APK from the output directory for distribution to testers.
 
