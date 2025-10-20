@@ -19,3 +19,4 @@ Excluded dates (Federal statuatory holidays)
 11 - Remembrance Day
 12 - All dates between December 25th and January 1st
 
+WHEN a Statuatory holiday falls on a weekend, it is moved to the next business day.  Ensure that this is adjusted automatically.
