@@ -10,11 +10,12 @@ Excluded dates (Federal statuatory holidays)
 2 - Good Friday
 3 - Easter Monday
 4 - Victoria Day
-5 - Canada Day
-6 - August Civi Holiday
-7 - Labour Day
-8 - Truth and Reconciliation day
-9 - Thanksgiving Monday
-10 - Remembrance Day
+5 - June 24th (only for learners in Quebec - make this a checkbox or toggle!)
+6 - Canada Day
+7 - August Civi Holiday (anyone outside quebec.
+8 - Labour Day
+9 - Truth and Reconciliation day
+10 - Thanksgiving Monday
+11 - Remembrance Day
 12 - All dates between December 25th and January 1st
 
