@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "SLT Business Date Calculator",
+    "slug": "slt-business-date-calculator",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": ["ios", "android"],
+    "sdkVersion": "50.0.0",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ca.slt.businessdatecalculator"
+    },
+    "android": {
+      "package": "ca.slt.businessdatecalculator",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "00000000-0000-0000-0000-000000000000"
+      }
+    }
+  }
+}
