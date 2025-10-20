@@ -15,7 +15,25 @@ Summarizes total business days, billable hours, subtotal, tax, and grand total, 
 
 Starts with a 60-business-day planning window so you can see a typical contract quickly, with tests covering the default and key calculations.
 
-Getting Started
+Quick Start
+Follow these steps to see the calculator running on your device in just a few minutes.
+
+1. Clone the repository and open the Expo project:
+   ```bash
+   git clone https://github.com/<your-org>/SLT_business_date_calculator.git
+   cd SLT_business_date_calculator/app
+   ```
+2. Install dependencies (Expo CLI, React Native, TypeScript, and supporting libraries are included in `package.json`):
+   ```bash
+   npm install
+   ```
+3. Launch the development server with Metro bundler and QR code dashboard:
+   ```bash
+   npm start
+   ```
+4. Scan the QR code with the Expo Go mobile app (available on Google Play and the iOS App Store) while your development machine and device share the same network to load the app instantly.
+
+Installation
 Prerequisites
 Node.js LTS and npm.
 
@@ -61,13 +79,29 @@ The command also installs the build on any connected device; you can grab the AP
 Run on iOS simulator or device
 npm run ios
 The script wraps expo run:ios, generating the native iOS project and opening it in Xcode or the default simulator. macOS with Xcode installed is required for simulator/device builds.
+- Node.js LTS (18.x or newer is recommended) and npm.
+- Optional: [nvm](https://github.com/nvm-sh/nvm) for managing Node.js versions.
+- Expo CLI tooling installs automatically when you run the npm scripts above; no global installation is required.
+
+Project setup
+1. Ensure you are inside the `app` directory and install dependencies: `npm install`.
+2. Copy any environment configuration (if introduced later) such as `.env.example` to `.env`.
+3. Verify the TypeScript and Metro caches are clean before first run (optional):
+   ```bash
+   npm run lint -- --fix
+   npm run test -- --watch=false
+   ```
+
+Running the application
+- Development: `npm start` to open the Expo developer tools. Press `a` for Android emulator, `i` for iOS simulator (macOS only), or `w` for the web preview.
+- Android build: `npm run android` generates the native Android project, produces a debug APK in `android/app/build/outputs/apk/debug/`, and installs it on any connected emulator or device.
+- iOS build: `npm run ios` creates the iOS native project and launches it in the default simulator or Xcode. A macOS host with Xcode is required.
 
 Production-ready builds
-For signing and publishing to the Apple App Store or Google Play, use Expo Application Services (EAS Build). After creating an Expo account and configuring your credentials, run npx eas build -p android or npx eas build -p ios from the app directory to produce store-ready binaries.
+For store submissions, use Expo Application Services (EAS Build). After creating an Expo account and configuring credentials, run `npx eas build -p android` or `npx eas build -p ios` from the `app` directory to produce signed binaries.
 
 Testing
-npm test
-The test suite covers both the UI defaults and the business-day calculation service using Jest and React Native Testing Library.
+Run `npm test` to execute the Jest and React Native Testing Library suites that cover business-day calculations and UI defaults.
 
 Tech Stack
 Expo 50, React Native 0.73, React 18, and TypeScript.

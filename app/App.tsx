@@ -21,7 +21,26 @@ import {
 } from './src/services/businessDayCalculator';
 
 const TAX_RATE = 0.13;
-const DEFAULT_RATE_CHANGE_DATE = new Date('2024-11-12T00:00:00');
+
+const getNextRateChangeDate = (refDate: Date): Date => {
+  const normalizedReference = new Date(
+    refDate.getFullYear(),
+    refDate.getMonth(),
+    refDate.getDate(),
+    0,
+    0,
+    0,
+    0
+  );
+
+  const currentYearChangeDate = new Date(refDate.getFullYear(), 10, 12);
+
+  if (normalizedReference <= currentYearChangeDate) {
+    return currentYearChangeDate;
+  }
+
+  return new Date(refDate.getFullYear() + 1, 10, 12);
+};
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-CA', {
@@ -73,7 +92,9 @@ const App: React.FC = () => {
   const [baseRateOption, setBaseRateOption] = useState<string>(formatRate(MANDATED_RATES[0]));
   const [baseRateInput, setBaseRateInput] = useState<string>(formatRate(MANDATED_RATES[0]));
   const [rateChangeEnabled, setRateChangeEnabled] = useState<boolean>(true);
-  const [rateChangeDate, setRateChangeDate] = useState<Date>(DEFAULT_RATE_CHANGE_DATE);
+  const [rateChangeDate, setRateChangeDate] = useState<Date>(() =>
+    getNextRateChangeDate(today)
+  );
   const [rateChangeRateOption, setRateChangeRateOption] = useState<string>(
     formatRate(MANDATED_RATES[1] ?? MANDATED_RATES[0])
   );
@@ -105,7 +126,15 @@ const App: React.FC = () => {
         })
       );
     }
-  }, [startDate, endDate, isLearnerInQuebec]);
+    const normalizedStartDate = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
+    if (rateChangeDate < normalizedStartDate) {
+      setRateChangeDate(getNextRateChangeDate(startDate));
+    }
+  }, [startDate, endDate, isLearnerInQuebec, rateChangeDate]);
 
   const baseRate =
     baseRateOption === 'other' ? parseFloat(baseRateInput) || 0 : parseFloat(baseRateOption);
