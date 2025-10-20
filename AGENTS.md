@@ -5,3 +5,16 @@ Requirements: 1) - allows the user to enter start and end dates using a UI and s
 
 Selectable hourly rates are: $17.94, $19.00, $19.19, $19.50, $20.00, $20.44, $20.50. $21.00,  $21.69, $22.00, $22.50, $23.00, $23.50, $24.00
 
+Excluded dates (Federal statuatory holidays)
+1 - New Years day
+2 - Good Friday
+3 - Easter Monday
+4 - Victoria Day
+5 - Canada Day
+6 - August Civi Holiday
+7 - Labour Day
+8 - Truth and Reconciliation day
+9 - Thanksgiving Monday
+10 - Remembrance Day
+12 - All dates between December 25th and January 1st
+
