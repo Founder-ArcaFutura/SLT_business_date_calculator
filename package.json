@@ -1,0 +1,14 @@
+{
+  "name": "slt-business-date-calculator-root",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "app"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace app",
+    "android": "npm run android --workspace app",
+    "ios": "npm run ios --workspace app",
+    "test": "npm run test --workspace app"
+  }
+}
