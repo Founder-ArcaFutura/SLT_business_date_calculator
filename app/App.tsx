@@ -9,12 +9,14 @@ import {
   TextInput,
   View
 } from 'react-native';
+import addDays from 'date-fns/addDays';
 import { Picker } from '@react-native-picker/picker';
 import DatePickerField from './src/components/DatePickerField';
 import {
   BUSINESS_HOURS_PER_DAY,
   ContractRateChange,
-  calculateContract
+  calculateContract,
+  enumerateBusinessDays
 } from './src/services/businessDayCalculator';
 import { VENDOR_PROFILES } from './src/constants/vendors';
 
@@ -27,10 +29,23 @@ const formatCurrency = (value: number) =>
     currency: 'CAD'
   }).format(value);
 
+const DEFAULT_BUSINESS_DAY_WINDOW = 60;
+
+const getEndDateForBusinessDays = (
+  startDate: Date,
+  businessDayTarget: number = DEFAULT_BUSINESS_DAY_WINDOW
+): Date => {
+  let endDate = new Date(startDate);
+  while (enumerateBusinessDays(startDate, endDate).length < businessDayTarget) {
+    endDate = addDays(endDate, 1);
+  }
+  return endDate;
+};
+
 const App: React.FC = () => {
   const today = useMemo(() => new Date(), []);
   const [startDate, setStartDate] = useState<Date>(today);
-  const [endDate, setEndDate] = useState<Date>(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30));
+  const [endDate, setEndDate] = useState<Date>(() => getEndDateForBusinessDays(today));
   const [includeTax, setIncludeTax] = useState<boolean>(true);
   const [baseRateInput, setBaseRateInput] = useState<string>('120');
   const [selectedVendor, setSelectedVendor] = useState<string>('custom');
@@ -40,7 +55,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (startDate > endDate) {
-      setEndDate(startDate);
+      setEndDate(getEndDateForBusinessDays(startDate));
     }
   }, [startDate, endDate]);
 
