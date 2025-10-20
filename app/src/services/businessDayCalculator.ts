@@ -95,7 +95,9 @@ const addObservedHoliday = (date: Date, holidays: Set<string>) => {
 export const getCanadianFederalHolidays = (year: number): Set<string> => {
   const holidays = new Set<string>();
   addObservedHoliday(new Date(year, 0, 1), holidays); // New Year's Day
-  addObservedHoliday(addDays(calculateEasterSunday(year), -2), holidays); // Good Friday
+  const easterSunday = calculateEasterSunday(year);
+  addObservedHoliday(addDays(easterSunday, -2), holidays); // Good Friday
+  addObservedHoliday(addDays(easterSunday, 1), holidays); // Easter Monday
   addObservedHoliday(getLastMondayBefore(year, 4, 24), holidays); // Victoria Day
   addObservedHoliday(new Date(year, 6, 1), holidays); // Canada Day
   addObservedHoliday(new Date(year, 8, 30), holidays); // National Day for Truth and Reconciliation
@@ -104,6 +106,9 @@ export const getCanadianFederalHolidays = (year: number): Set<string> => {
   addObservedHoliday(new Date(year, 10, 11), holidays); // Remembrance Day
   addObservedHoliday(new Date(year, 11, 25), holidays); // Christmas
   addObservedHoliday(new Date(year, 11, 26), holidays); // Boxing Day
+  for (let day = 27; day <= 31; day += 1) {
+    addObservedHoliday(new Date(year, 11, day), holidays);
+  }
   return holidays;
 };
 

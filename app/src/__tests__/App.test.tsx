@@ -41,7 +41,7 @@ describe('App integration', () => {
   });
 
   it('updates calculations when inputs change', async () => {
-    const { getByTestId, getByText } = render(<App />);
+    const { getByTestId, getByText, getAllByText } = render(<App />);
 
     fireEvent.changeText(getByTestId('start-date-picker'), '2024-11-08');
     fireEvent.changeText(getByTestId('end-date-picker'), '2024-11-15');
@@ -53,7 +53,7 @@ describe('App integration', () => {
     await waitFor(() => {
       expect(getByText('5')).toBeTruthy();
     });
-    expect(getByText('$6,750.00')).toBeTruthy();
+    expect(getAllByText('$6,750.00').length).toBeGreaterThan(0);
   });
 
 });
