@@ -3,5 +3,5 @@
   "lang": "en",
   "name": "slt-business-date-calculator-root",
   "short_name": "slt-business-date-calculator-root",
-  "start_url": "/?utm_source=web_app_manifest"
+  "start_url": "./?utm_source=web_app_manifest"
 }
