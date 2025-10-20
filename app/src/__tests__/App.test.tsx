@@ -1,6 +1,7 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import App from '../../App';
+import { BUSINESS_HOURS_PER_DAY } from '../services/businessDayCalculator';
 
 jest.mock('../components/DatePickerField', () => {
   const React = require('react');
@@ -28,6 +29,17 @@ jest.mock('../components/DatePickerField', () => {
 });
 
 describe('App integration', () => {
+  it('defaults to a 60 business day window', () => {
+    const { getByText } = render(<App />);
+
+    const expectedHours = (60 * BUSINESS_HOURS_PER_DAY).toFixed(2);
+    const expectedHoursLabel = `${expectedHours} (${BUSINESS_HOURS_PER_DAY} hrs/day)`;
+
+    expect(getByText('Business days')).toBeTruthy();
+    expect(getByText('60')).toBeTruthy();
+    expect(getByText(expectedHoursLabel)).toBeTruthy();
+  });
+
   it('updates calculations when inputs change', async () => {
     const { getByTestId, getByText } = render(<App />);
 

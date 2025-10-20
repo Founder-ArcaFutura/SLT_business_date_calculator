@@ -13,7 +13,8 @@ import DatePickerField from './src/components/DatePickerField';
 import {
   BUSINESS_HOURS_PER_DAY,
   ContractRateChange,
-  calculateContract
+  calculateContract,
+  enumerateBusinessDays
 } from './src/services/businessDayCalculator';
 
 const TAX_RATE = 0.13;
@@ -25,10 +26,23 @@ const formatCurrency = (value: number) =>
     currency: 'CAD'
   }).format(value);
 
+const DEFAULT_BUSINESS_DAY_WINDOW = 60;
+
+const getEndDateForBusinessDays = (
+  startDate: Date,
+  businessDayTarget: number = DEFAULT_BUSINESS_DAY_WINDOW
+): Date => {
+  let endDate = new Date(startDate);
+  while (enumerateBusinessDays(startDate, endDate).length < businessDayTarget) {
+    endDate = addDays(endDate, 1);
+  }
+  return endDate;
+};
+
 const App: React.FC = () => {
   const today = useMemo(() => new Date(), []);
   const [startDate, setStartDate] = useState<Date>(today);
-  const [endDate, setEndDate] = useState<Date>(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30));
+  const [endDate, setEndDate] = useState<Date>(() => getEndDateForBusinessDays(today));
   const [includeTax, setIncludeTax] = useState<boolean>(true);
   const [baseRateInput, setBaseRateInput] = useState<string>('120');
   const [rateChangeEnabled, setRateChangeEnabled] = useState<boolean>(true);
@@ -37,7 +51,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (startDate > endDate) {
-      setEndDate(startDate);
+      setEndDate(getEndDateForBusinessDays(startDate));
     }
   }, [startDate, endDate]);
 
