@@ -56,12 +56,4 @@ describe('App integration', () => {
     expect(getByText('$6,750.00')).toBeTruthy();
   });
 
-  it('applies vendor presets for rates and rate changes', () => {
-    const { getByTestId } = render(<App />);
-
-    fireEvent(getByTestId('vendor-picker'), 'valueChange', 'acme-consulting');
-
-    expect(getByTestId('base-rate-input').props.value).toBe('120');
-    expect(getByTestId('rate-change-rate-input').props.value).toBe('135');
-  });
 });

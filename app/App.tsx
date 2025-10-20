@@ -9,8 +9,6 @@ import {
   TextInput,
   View
 } from 'react-native';
-import addDays from 'date-fns/addDays';
-import { Picker } from '@react-native-picker/picker';
 import DatePickerField from './src/components/DatePickerField';
 import {
   BUSINESS_HOURS_PER_DAY,
@@ -18,7 +16,6 @@ import {
   calculateContract,
   enumerateBusinessDays
 } from './src/services/businessDayCalculator';
-import { VENDOR_PROFILES } from './src/constants/vendors';
 
 const TAX_RATE = 0.13;
 const DEFAULT_RATE_CHANGE_DATE = new Date('2024-11-12T00:00:00');
@@ -48,7 +45,6 @@ const App: React.FC = () => {
   const [endDate, setEndDate] = useState<Date>(() => getEndDateForBusinessDays(today));
   const [includeTax, setIncludeTax] = useState<boolean>(true);
   const [baseRateInput, setBaseRateInput] = useState<string>('120');
-  const [selectedVendor, setSelectedVendor] = useState<string>('custom');
   const [rateChangeEnabled, setRateChangeEnabled] = useState<boolean>(true);
   const [rateChangeDate, setRateChangeDate] = useState<Date>(DEFAULT_RATE_CHANGE_DATE);
   const [rateChangeRateInput, setRateChangeRateInput] = useState<string>('135');
@@ -82,25 +78,6 @@ const App: React.FC = () => {
     [startDate, endDate, baseRate, rateChange, includeTax]
   );
 
-  const handleVendorChange = (value: string) => {
-    setSelectedVendor(value);
-    if (value === 'custom') {
-      return;
-    }
-    const vendor = VENDOR_PROFILES.find((profile) => profile.id === value);
-    if (!vendor) {
-      return;
-    }
-    setBaseRateInput(vendor.hourlyRate.toString());
-    if (vendor.rateChange) {
-      setRateChangeEnabled(true);
-      setRateChangeDate(new Date(`${vendor.rateChange.effectiveDate}T00:00:00`));
-      setRateChangeRateInput(vendor.rateChange.hourlyRate.toString());
-    } else {
-      setRateChangeEnabled(false);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" />
@@ -125,20 +102,7 @@ const App: React.FC = () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Rates & Vendor</Text>
-          <Text style={styles.label}>Vendor Profile</Text>
-          <View style={styles.pickerWrapper}>
-            <Picker
-              selectedValue={selectedVendor}
-              onValueChange={handleVendorChange}
-              testID="vendor-picker"
-            >
-              <Picker.Item label="Custom" value="custom" />
-              {VENDOR_PROFILES.map((vendor) => (
-                <Picker.Item key={vendor.id} label={vendor.name} value={vendor.id} />
-              ))}
-            </Picker>
-          </View>
+          <Text style={styles.sectionTitle}>Rate Settings</Text>
           <Text style={styles.label}>Base Hourly Rate (CAD)</Text>
           <TextInput
             style={styles.input}
@@ -277,13 +241,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
     fontSize: 16,
-    backgroundColor: '#fff'
-  },
-  pickerWrapper: {
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    borderRadius: 8,
-    marginBottom: 16,
     backgroundColor: '#fff'
   },
   switchRow: {
