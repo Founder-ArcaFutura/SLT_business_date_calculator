@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { addDays } from 'date-fns';
 import {
   SafeAreaView,
   ScrollView,
@@ -9,6 +10,7 @@ import {
   TextInput,
   View
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import DatePickerField from './src/components/DatePickerField';
 import {
   BUSINESS_HOURS_PER_DAY,
@@ -39,15 +41,56 @@ const getEndDateForBusinessDays = (
   return endDate;
 };
 
+const MANDATED_RATES = [
+  17.94,
+  19.0,
+  19.19,
+  19.5,
+  20.0,
+  20.44,
+  20.5,
+  21.0,
+  21.69,
+  22.0,
+  22.5,
+  23.0,
+  23.5,
+  24.0
+];
+
+const formatRate = (value: number) => value.toFixed(2);
+
 const App: React.FC = () => {
   const today = useMemo(() => new Date(), []);
   const [startDate, setStartDate] = useState<Date>(today);
   const [endDate, setEndDate] = useState<Date>(() => getEndDateForBusinessDays(today));
   const [includeTax, setIncludeTax] = useState<boolean>(true);
-  const [baseRateInput, setBaseRateInput] = useState<string>('120');
+  const [baseRateOption, setBaseRateOption] = useState<string>(formatRate(MANDATED_RATES[0]));
+  const [baseRateInput, setBaseRateInput] = useState<string>(formatRate(MANDATED_RATES[0]));
   const [rateChangeEnabled, setRateChangeEnabled] = useState<boolean>(true);
   const [rateChangeDate, setRateChangeDate] = useState<Date>(DEFAULT_RATE_CHANGE_DATE);
-  const [rateChangeRateInput, setRateChangeRateInput] = useState<string>('135');
+  const [rateChangeRateOption, setRateChangeRateOption] = useState<string>(
+    formatRate(MANDATED_RATES[1] ?? MANDATED_RATES[0])
+  );
+  const [rateChangeRateInput, setRateChangeRateInput] = useState<string>(
+    formatRate(MANDATED_RATES[1] ?? MANDATED_RATES[0])
+  );
+
+  const mandatedRateOptions = useMemo(() => MANDATED_RATES.map(formatRate), []);
+
+  const handleBaseRateOptionChange = (value: string) => {
+    setBaseRateOption(value);
+    if (value !== 'other') {
+      setBaseRateInput(value);
+    }
+  };
+
+  const handleRateChangeOptionChange = (value: string) => {
+    setRateChangeRateOption(value);
+    if (value !== 'other') {
+      setRateChangeRateInput(value);
+    }
+  };
 
   useEffect(() => {
     if (startDate > endDate) {
@@ -55,8 +98,12 @@ const App: React.FC = () => {
     }
   }, [startDate, endDate]);
 
-  const baseRate = parseFloat(baseRateInput) || 0;
-  const rateChangeRate = parseFloat(rateChangeRateInput) || 0;
+  const baseRate =
+    baseRateOption === 'other' ? parseFloat(baseRateInput) || 0 : parseFloat(baseRateOption);
+  const rateChangeRate =
+    rateChangeRateOption === 'other'
+      ? parseFloat(rateChangeRateInput) || 0
+      : parseFloat(rateChangeRateOption);
 
   const rateChange: ContractRateChange | undefined = rateChangeEnabled
     ? {
@@ -104,14 +151,29 @@ const App: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Rate Settings</Text>
           <Text style={styles.label}>Base Hourly Rate (CAD)</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={baseRateInput}
-            onChangeText={setBaseRateInput}
-            placeholder="0.00"
-            testID="base-rate-input"
-          />
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={baseRateOption}
+              onValueChange={handleBaseRateOptionChange}
+              testID="base-rate-picker"
+              style={styles.picker}
+            >
+              {mandatedRateOptions.map((rate) => (
+                <Picker.Item key={rate} label={`$${rate}`} value={rate} />
+              ))}
+              <Picker.Item label="Other" value="other" />
+            </Picker>
+          </View>
+          {baseRateOption === 'other' && (
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={baseRateInput}
+              onChangeText={setBaseRateInput}
+              placeholder="0.00"
+              testID="base-rate-other-input"
+            />
+          )}
           <View style={styles.switchRow}>
             <Text style={styles.label}>Enable rate change</Text>
             <Switch
@@ -129,14 +191,29 @@ const App: React.FC = () => {
                 testID="rate-change-date"
               />
               <Text style={styles.label}>Rate after change (CAD)</Text>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                value={rateChangeRateInput}
-                onChangeText={setRateChangeRateInput}
-                placeholder="0.00"
-                testID="rate-change-rate-input"
-              />
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={rateChangeRateOption}
+                  onValueChange={handleRateChangeOptionChange}
+                  testID="rate-change-rate-picker"
+                  style={styles.picker}
+                >
+                  {mandatedRateOptions.map((rate) => (
+                    <Picker.Item key={rate} label={`$${rate}`} value={rate} />
+                  ))}
+                  <Picker.Item label="Other" value="other" />
+                </Picker>
+              </View>
+              {rateChangeRateOption === 'other' && (
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={rateChangeRateInput}
+                  onChangeText={setRateChangeRateInput}
+                  placeholder="0.00"
+                  testID="rate-change-rate-input"
+                />
+              )}
             </View>
           )}
         </View>
@@ -242,6 +319,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
     backgroundColor: '#fff'
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 8,
+    marginBottom: 16,
+    overflow: 'hidden',
+    backgroundColor: '#fff'
+  },
+  picker: {
+    height: 44
   },
   switchRow: {
     flexDirection: 'row',
