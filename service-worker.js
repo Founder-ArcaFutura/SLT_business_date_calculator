@@ -1,4 +1,4 @@
-Add a simple service worker so it works offline:
+// Add a simple service worker so it works offline.
 
 self.addEventListener("install", e => {
   e.waitUntil(
