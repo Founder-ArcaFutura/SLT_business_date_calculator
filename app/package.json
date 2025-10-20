@@ -1,0 +1,43 @@
+{
+  "name": "slt-business-date-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@react-native-community/datetimepicker": "^7.6.0",
+    "@react-native-picker/picker": "^2.6.1",
+    "date-fns": "^2.30.0",
+    "expo": "^50.0.0",
+    "expo-status-bar": "^1.7.2",
+    "react": "^18.2.0",
+    "react-native": "0.73.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@testing-library/react-native": "^12.4.5",
+    "@types/jest": "^29.5.12",
+    "@types/react": "^18.2.21",
+    "@types/react-test-renderer": "^18.0.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "react-test-renderer": "18.2.0",
+    "typescript": "^5.2.2",
+    "babel-preset-expo": "^9.5.0",
+    "@testing-library/jest-native": "^5.4.3"
+  },
+  "jest": {
+    "preset": "react-native",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@react-native|react-native|@react-native-community|expo|expo-status-bar|@expo)/)"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ]
+  }
+}
