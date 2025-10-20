@@ -3,7 +3,25 @@ import { calculateContract, enumerateBusinessDays } from './businessDayCalculato
 describe('businessDayCalculator', () => {
   it('excludes weekends and Canadian federal holidays', () => {
     const days = enumerateBusinessDays(new Date('2024-03-25'), new Date('2024-04-05'));
-    expect(days).toHaveLength(9);
+    expect(days).toHaveLength(8);
+  });
+
+  it('treats Easter Monday as a holiday', () => {
+    const days = enumerateBusinessDays(new Date('2024-03-29'), new Date('2024-04-02'));
+    const formatted = days.map((day) => day.toISOString().slice(0, 10));
+    expect(formatted).toEqual(['2024-04-02']);
+  });
+
+  it('excludes the full late-December holiday period', () => {
+    const days = enumerateBusinessDays(new Date('2024-12-23'), new Date('2025-01-03'));
+    const formatted = days.map((day) => day.toISOString().slice(0, 10));
+    expect(formatted).toEqual(['2024-12-23', '2024-12-24', '2025-01-02', '2025-01-03']);
+  });
+
+  it('observes holidays that fall on a weekend', () => {
+    const days = enumerateBusinessDays(new Date('2023-06-30'), new Date('2023-07-04'));
+    const formatted = days.map((day) => day.toISOString().slice(0, 10));
+    expect(formatted).toEqual(['2023-06-30', '2023-07-04']);
   });
 
   it('applies rate changes from the effective date onward', () => {
