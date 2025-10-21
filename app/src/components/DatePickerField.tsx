@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
@@ -21,6 +21,16 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
   testID
 }) => {
   const [showPicker, setShowPicker] = useState(false);
+  const isWeb = Platform.OS === 'web';
+
+  const formattedMinimumDate = useMemo(
+    () => (minimumDate ? format(minimumDate, 'yyyy-MM-dd') : undefined),
+    [minimumDate]
+  );
+  const formattedMaximumDate = useMemo(
+    () => (maximumDate ? format(maximumDate, 'yyyy-MM-dd') : undefined),
+    [maximumDate]
+  );
 
   const handleChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
@@ -33,28 +43,57 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 
   const displayValue = format(date, 'PPP');
 
+  const handleWebDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    if (!value) {
+      return;
+    }
+
+    const [year, month, day] = value.split('-').map(Number);
+    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
+      return;
+    }
+
+    const selectedDate = new Date(year, month - 1, day);
+    onChange(selectedDate);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`${label} picker`}
-        onPress={() => setShowPicker(true)}
-        style={styles.valueContainer}
-        testID={testID}
-      >
-        <Text style={styles.value}>{displayValue}</Text>
-      </Pressable>
-      {(showPicker || Platform.OS === 'ios') && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display="default"
-          onChange={handleChange}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-          style={Platform.OS === 'ios' ? styles.inlinePicker : undefined}
+      {isWeb ? (
+        <input
+          type="date"
+          value={format(date, 'yyyy-MM-dd')}
+          min={formattedMinimumDate}
+          max={formattedMaximumDate}
+          onChange={handleWebDateChange}
+          data-testid={testID}
+          style={webInputStyle}
         />
+      ) : (
+        <>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${label} picker`}
+            onPress={() => setShowPicker(true)}
+            style={styles.valueContainer}
+            testID={testID}
+          >
+            <Text style={styles.value}>{displayValue}</Text>
+          </Pressable>
+          {(showPicker || Platform.OS === 'ios') && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={handleChange}
+              minimumDate={minimumDate}
+              maximumDate={maximumDate}
+              style={Platform.OS === 'ios' ? styles.inlinePicker : undefined}
+            />
+          )}
+        </>
       )}
     </View>
   );
@@ -86,5 +125,18 @@ const styles = StyleSheet.create({
     marginTop: 8
   }
 });
+
+const webInputStyle: React.CSSProperties = {
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: '#cbd5e1',
+  borderRadius: 8,
+  padding: '12px 16px',
+  backgroundColor: '#fff',
+  fontSize: 16,
+  color: '#1f2933',
+  width: '100%',
+  boxSizing: 'border-box'
+};
 
 export default DatePickerField;
