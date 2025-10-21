@@ -1,6 +1,7 @@
 {
   "name": "slt-business-date-calculator-root",
   "private": true,
+  "homepage": "https://founder-arcafutura.github.io/SLT_business_date_calculator",
   "version": "1.0.0",
   "workspaces": [
     "app"
