@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.js": "static/js/main.24856cbc.js",
-    "static/js/446.7db364b4.js": "static/js/446.7db364b4.js",
-    "index.html": "index.html",
-    "serve.json": "serve.json",
-    "manifest.json": "manifest.json",
-    "main.24856cbc.js.map": "static/js/main.24856cbc.js.map",
-    "446.7db364b4.js.map": "static/js/446.7db364b4.js.map"
+    "main.js": "/SLT_business_date_calculator/static/js/main.e9f0996e.js",
+    "static/js/365.e07cf236.js": "/SLT_business_date_calculator/static/js/365.e07cf236.js",
+    "index.html": "/SLT_business_date_calculator/index.html",
+    "serve.json": "/SLT_business_date_calculator/serve.json",
+    "manifest.json": "/SLT_business_date_calculator/manifest.json",
+    "main.e9f0996e.js.map": "/SLT_business_date_calculator/static/js/main.e9f0996e.js.map",
+    "365.e07cf236.js.map": "/SLT_business_date_calculator/static/js/365.e07cf236.js.map"
   },
   "entrypoints": [
-    "static/js/446.7db364b4.js",
-    "static/js/main.24856cbc.js"
+    "static/js/365.e07cf236.js",
+    "static/js/main.e9f0996e.js"
   ]
 }
