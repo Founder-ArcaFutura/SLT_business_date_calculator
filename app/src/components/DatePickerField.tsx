@@ -15,4 +15,17 @@ if (Platform.OS === 'web') {
 
 export type { DatePickerFieldProps };
 
+const webInputStyle: React.CSSProperties = {
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: '#cbd5e1',
+  borderRadius: 8,
+  padding: '12px 16px',
+  backgroundColor: '#fff',
+  fontSize: 16,
+  color: '#1f2933',
+  width: '100%',
+  boxSizing: 'border-box'
+};
+
 export default DatePickerField;
